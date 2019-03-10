@@ -37,19 +37,21 @@ export class Sphere {
 
                 const s = j / sectors;
                 const t = i / rings;
-                textureCoords.push(s, y);
+                textureCoords.push(s, t);
             }
         }
 
         for(var r = 0; r < rings; r++) {
             for(var s = 0; s < sectors; s++) {
+                const p1 = r * (sectors + 1) + s;
+                const p2 = p1 + (sectors + 1);
                 indices.push(
-                    r * sectors 		+ s,
-                    r * sectors 		+ (s + 1),
-                    (r + 1) * sectors 	+ (s + 1),
-                    r * sectors 		+ s,
-                    (r + 1) * sectors 	+ (s + 1),
-                    (r + 1) * sectors 	+ (s + 1)
+                    p1, 
+                    p2, 
+                    p1 + 1,
+                    p1 + 1, 
+                    p2, 
+                    p2 + 1
                 );
             }
         }
@@ -94,8 +96,11 @@ export class Sphere {
         this.gl.vertexAttribPointer(programInfo.attributes.normals, 3, this.gl.FLOAT, false, 0, 0);
         this.gl.enableVertexAttribArray(programInfo.attributes.normals);
 
+        const step = (5000 - new Date().getTime() % 5000) / 5000 * Math.PI * 2;
         const modelMatrix = mat4.create();
+        mat4.rotate(modelMatrix, modelMatrix, step, [ 1, 1, 0 ]);
         var modelViewProjectionMatrix = mat4.clone(viewProjectionMatrix);
+        mat4.translate(modelViewProjectionMatrix, modelViewProjectionMatrix, [ 3, 3, 0 ]);
         mat4.multiply(modelViewProjectionMatrix, modelViewProjectionMatrix, modelMatrix);
 
         var normalMatrix = mat3.create();

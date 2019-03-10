@@ -66,7 +66,7 @@ export class Game {
 	}
 	private async addObjects() {
 		this.gameObjects.push(new Cube(this.gl, await TextureLoader.loadFromFile(this.gl, '/res/floor_new.jpg')));
-		this.gameObjects.push(new Sphere(this.gl, await TextureLoader.loadFromFile(this.gl, '/res/floor_new.jpg'), 10, 10, 10));
+		this.gameObjects.push(new Sphere(this.gl, await TextureLoader.loadFromFile(this.gl, '/res/floor_new.jpg'), 1, 50, 50));
 	}
 	async start() {
 		await this.buildProgram();
