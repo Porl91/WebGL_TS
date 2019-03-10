@@ -1,5 +1,5 @@
 import { ProgramInfo } from "../program_info";
-import { mat4, mat3 } from "gl-matrix";
+import { mat4, mat3, vec3 } from "gl-matrix";
 import { GLHelpers, WebGLBufferWithSize } from "../gl_utils";
 
 export class Cube {
@@ -7,7 +7,7 @@ export class Cube {
 	textureCoords: WebGLBuffer;
 	normals: WebGLBuffer;
 	indices: WebGLBufferWithSize;
-	constructor(private gl: WebGLRenderingContext, private texture: WebGLTexture) {
+	constructor(private gl: WebGLRenderingContext, private texture: WebGLTexture, public position: vec3) {
 		this.positions = GLHelpers.createBuffer(gl, 
 			[
 				// Front face
@@ -163,7 +163,7 @@ export class Cube {
         const modelMatrix = mat4.create();
 		mat4.rotate(modelMatrix, modelMatrix, step, [ 1, 1, 0 ]);
         var modelViewProjectionMatrix = mat4.clone(viewProjectionMatrix);
-		mat4.translate(modelViewProjectionMatrix, modelViewProjectionMatrix, [ 0, 3, 0 ]);
+		mat4.translate(modelViewProjectionMatrix, modelViewProjectionMatrix, [ this.position[0], this.position[1], this.position[2] ]);
         mat4.multiply(modelViewProjectionMatrix, modelViewProjectionMatrix, modelMatrix);
 
         var normalMatrix = mat3.create();

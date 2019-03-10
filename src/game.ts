@@ -1,4 +1,4 @@
-import { mat4 } from 'gl-matrix';
+import { mat4, vec3 } from 'gl-matrix';
 import { Chunk } from './drawables/chunk';
 import { ProgramBuilder } from './program_builder';
 import { ProgramInfo } from './program_info';
@@ -15,7 +15,7 @@ export class Game {
 	private chunks: Chunk[] = [];
 	private gameObjects: Drawable[] = [];
 	private cameraPosition: number[] = [ -10, 0, -20 ];
-	private lightPosition: number[] = [ 0, 3, 0 ];
+	private lightPosition: number[] = [ 0, 3, 6 ];
 	private diffuseColour: number[] = [ 1.0, 1.0, 0.0 ];
 	private ambientColour: number[] = [ 1.0, 0.0, 1.0 ];
 	
@@ -66,8 +66,9 @@ export class Game {
 		this.chunks = await Promise.all(unprocessedChunks);
 	}
 	private async addObjects() {
-		this.gameObjects.push(new Cube(this.gl, await TextureLoader.loadFromFile(this.gl, '/res/floor_new.jpg')));
-		this.gameObjects.push(new Sphere(this.gl, await TextureLoader.loadFromFile(this.gl, '/res/WelcomeToEarf.jpg'), 1, 50, 50));
+		this.gameObjects.push(new Cube(this.gl, await TextureLoader.loadFromFile(this.gl, '/res/floor_new.jpg'), vec3.fromValues(0, 2, 0)));
+		this.gameObjects.push(new Sphere(this.gl, await TextureLoader.loadFromFile(this.gl, '/res/WelcomeToEarf.jpg'), vec3.fromValues(3, 2, 0), 1, 50, 50));
+		this.gameObjects.push(new Sphere(this.gl, await TextureLoader.loadFromFile(this.gl, '/res/sun.jpg'), vec3.fromValues(0, 0, 0), 1, 50, 50));
 	}
 	async start() {
 		await this.buildProgram();
@@ -82,17 +83,24 @@ export class Game {
 	}
 	update(delta: number) {
 		const cameraMoveDelta = 0.1;
-		const lightMoveDelta = 0.5;
+		const lightMoveDelta = 0.3;
 		// Camera movement
-		if (this.keyStateChanger.isDown('w')) this.moveCameraPosition(0, cameraMoveDelta);
-		if (this.keyStateChanger.isDown('s')) this.moveCameraPosition(0, -cameraMoveDelta);
-		if (this.keyStateChanger.isDown('a')) this.moveCameraPosition(cameraMoveDelta, 0);
-		if (this.keyStateChanger.isDown('d')) this.moveCameraPosition(-cameraMoveDelta, 0);
+		if (this.keyStateChanger.isDown('w')) this.moveCameraPosition(0, 0, cameraMoveDelta);
+		if (this.keyStateChanger.isDown('s')) this.moveCameraPosition(0, 0, -cameraMoveDelta);
+		if (this.keyStateChanger.isDown('a')) this.moveCameraPosition(cameraMoveDelta, 0, 0);
+		if (this.keyStateChanger.isDown('d')) this.moveCameraPosition(-cameraMoveDelta, 0, 0);
+		if (this.keyStateChanger.isDown('q')) this.moveCameraPosition(0, cameraMoveDelta, 0);
+		if (this.keyStateChanger.isDown('e')) this.moveCameraPosition(0, -cameraMoveDelta, 0);
 		// Light movement
 		if (this.keyStateChanger.isDown('ArrowUp')) 	this.moveLightPosition(0, -lightMoveDelta);
 		if (this.keyStateChanger.isDown('ArrowDown')) 	this.moveLightPosition(0, lightMoveDelta);
 		if (this.keyStateChanger.isDown('ArrowLeft')) 	this.moveLightPosition(-lightMoveDelta, 0);
 		if (this.keyStateChanger.isDown('ArrowRight')) 	this.moveLightPosition(lightMoveDelta, 0);
+
+		var sun = this.gameObjects[this.gameObjects.length - 1];
+		if (sun instanceof Sphere) {
+			sun.position = vec3.fromValues(this.lightPosition[0], this.lightPosition[1], this.lightPosition[2]);
+		}
 	}
 	draw(delta: number) {
 		this.gl.enable(this.gl.CULL_FACE);
@@ -137,8 +145,9 @@ export class Game {
 		    gameObject.draw(this.programInfo, viewProjectionMatrix);
 		}
 	}
-	moveCameraPosition(xDelta: number, zDelta: number) {
+	moveCameraPosition(xDelta: number, yDelta: number, zDelta: number) {
 		this.cameraPosition[0] += xDelta;
+		this.cameraPosition[1] += yDelta;
 		this.cameraPosition[2] += zDelta;
 	}
 	moveLightPosition(xDelta: number, zDelta: number) {

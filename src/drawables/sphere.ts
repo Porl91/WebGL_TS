@@ -1,6 +1,6 @@
 import { GLHelpers, WebGLBufferWithSize } from "../gl_utils";
 import { ProgramInfo } from "../program_info";
-import { mat4, mat3 } from "gl-matrix";
+import { mat4, mat3, vec3 } from "gl-matrix";
 
 export class Sphere {
     private positions: WebGLBuffer;
@@ -8,7 +8,7 @@ export class Sphere {
     private normals: WebGLBuffer;
     private indices: WebGLBufferWithSize;
 
-    constructor(private gl: WebGLRenderingContext, private texture: WebGLTexture, radius: number, rings: number, sectors: number) {
+    constructor(private gl: WebGLRenderingContext, private texture: WebGLTexture, public position: vec3, radius: number, rings: number, sectors: number) {
         const positions = [];
         const textureCoords = [];
         const normals = [];
@@ -100,7 +100,7 @@ export class Sphere {
         const modelMatrix = mat4.create();
         mat4.rotate(modelMatrix, modelMatrix, step, [ 1, 1, 0 ]);
         var modelViewProjectionMatrix = mat4.clone(viewProjectionMatrix);
-        mat4.translate(modelViewProjectionMatrix, modelViewProjectionMatrix, [ 3, 3, 0 ]);
+        mat4.translate(modelViewProjectionMatrix, modelViewProjectionMatrix, [ this.position[0], this.position[1], this.position[2] ]);
         mat4.multiply(modelViewProjectionMatrix, modelViewProjectionMatrix, modelMatrix);
 
         var normalMatrix = mat3.create();
