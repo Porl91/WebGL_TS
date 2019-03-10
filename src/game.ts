@@ -7,6 +7,7 @@ import { Drawable } from './drawable';
 import { Cube } from './drawables/cube';
 import { TextureLoader } from './texture_loader';
 import { Sphere } from './drawables/sphere';
+import { KeyStateChanger } from './key_state_changer';
 
 export class Game {
 	private gl: WebGLRenderingContext;
@@ -18,7 +19,7 @@ export class Game {
 	private diffuseColour: number[] = [ 1.0, 1.0, 0.0 ];
 	private ambientColour: number[] = [ 1.0, 0.0, 1.0 ];
 	
-	constructor(canvas: HTMLCanvasElement) { 
+	constructor(canvas: HTMLCanvasElement, private keyStateChanger: KeyStateChanger) { 
 		this.gl = canvas.getContext('webgl')!;
 	}
 	private async buildProgram() {
@@ -72,7 +73,26 @@ export class Game {
 		await this.buildProgram();
 		await this.addChunks();
 		await this.addObjects();
-		window.requestAnimationFrame(delta => this.draw(delta));
+		window.requestAnimationFrame(delta => this.interateLoop(delta));
+	}
+	interateLoop(delta: number) {
+		this.update(delta);
+		this.draw(delta);
+		window.requestAnimationFrame(delta => this.interateLoop(delta));
+	}
+	update(delta: number) {
+		const cameraMoveDelta = 0.1;
+		const lightMoveDelta = 0.5;
+		// Camera movement
+		if (this.keyStateChanger.isDown('w')) this.moveCameraPosition(0, cameraMoveDelta);
+		if (this.keyStateChanger.isDown('s')) this.moveCameraPosition(0, -cameraMoveDelta);
+		if (this.keyStateChanger.isDown('a')) this.moveCameraPosition(cameraMoveDelta, 0);
+		if (this.keyStateChanger.isDown('d')) this.moveCameraPosition(-cameraMoveDelta, 0);
+		// Light movement
+		if (this.keyStateChanger.isDown('ArrowUp')) 	this.moveLightPosition(0, -lightMoveDelta);
+		if (this.keyStateChanger.isDown('ArrowDown')) 	this.moveLightPosition(0, lightMoveDelta);
+		if (this.keyStateChanger.isDown('ArrowLeft')) 	this.moveLightPosition(-lightMoveDelta, 0);
+		if (this.keyStateChanger.isDown('ArrowRight')) 	this.moveLightPosition(lightMoveDelta, 0);
 	}
 	draw(delta: number) {
 		this.gl.enable(this.gl.CULL_FACE);
@@ -116,8 +136,6 @@ export class Game {
 		for (let gameObject of this.gameObjects) {
 		    gameObject.draw(this.programInfo, viewProjectionMatrix);
 		}
-
-		window.requestAnimationFrame(delta => this.draw(delta));
 	}
 	moveCameraPosition(xDelta: number, zDelta: number) {
 		this.cameraPosition[0] += xDelta;

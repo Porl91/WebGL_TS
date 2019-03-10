@@ -1,54 +1,30 @@
 import { Game } from './src/game';
+import { KeyStateChange, KeyStateChanger } from './src/key_state_changer';
 
 window.addEventListener('load', () => {
     var canvas = document.createElement('canvas');
     canvas.width = 1840;
     canvas.height = 640;
-    var game = new Game(canvas);
+    var keyStateChanger = new KeyStateChanger();
+    var game = new Game(canvas, keyStateChanger);
 
-    // var keyStream = new Event('key_input');
-    // window.addEventListener('key_input', ev => {
-    //     console.log('test');
-    // });
-    // window.dispatchEvent(keyStream);
-
-    var s = new ReadableStream({
+    var keyStream = new ReadableStream<KeyStateChange>({
         start: controller => {
-            window.setInterval(() => controller.enqueue('FUUUUK UUUU'), 1000);
+            window.addEventListener('keydown', ev => controller.enqueue({ key: ev.key, newState: true }));
+            window.addEventListener('keyup', ev => controller.enqueue({ key: ev.key, newState: false }));
         }
     });
-    s.getReader().read().then(result => console.log(result.value));
+    var reader = keyStream.getReader();
+    var responder = (result: ReadableStreamReadResult<KeyStateChange>) => {
+        if (result.value.newState) {
+            keyStateChanger.down(result.value.key);
+        } else {
+            keyStateChanger.up(result.value.key);
+        }
+        reader.read().then(responder);        
+    };
+    reader.read().then(responder);
 
-    // var keyStream = new ReadableStream<string>({
-    //     start(controller: ReadableStreamDefaultController<string>) {
-    //         console.log('Created key stream. Attaching listener...');
-    //         window.addEventListener('keydown', ev => {
-    //             console.log('Key pressed');
-    //             // const cameraMoveDelta = 0.1;
-    //             // const lightMoveDelta = 0.5;
-
-    //             controller.enqueue(ev.key);
-
-    //             // // Camera movement
-    //             // if (ev.key == 'w') game.moveCameraPosition(0, cameraMoveDelta);
-    //             // if (ev.key == 's') game.moveCameraPosition(0, -cameraMoveDelta);
-    //             // if (ev.key == 'a') game.moveCameraPosition(cameraMoveDelta, 0);
-    //             // if (ev.key == 'd') game.moveCameraPosition(-cameraMoveDelta, 0);
-        
-    //             // // Light source movement
-    //             // if (ev.key == 'ArrowUp')    game.moveLightPosition(0, -lightMoveDelta);
-    //             // if (ev.key == 'ArrowDown')  game.moveLightPosition(0, lightMoveDelta);
-    //             // if (ev.key == 'ArrowLeft')  game.moveLightPosition(-lightMoveDelta, 0);
-    //             // if (ev.key == 'ArrowRight') game.moveLightPosition(lightMoveDelta, 0);
-    //         });
-    //     }
-    // });
-    // keyStream.getReader().read().then(result => {
-    //     var key = <string>result.value;
-    //     if (key) {
-    //         alert(`Key received ${key}`);
-    //     }
-    // });
     document.body.appendChild(canvas);
     game.start();
 });
