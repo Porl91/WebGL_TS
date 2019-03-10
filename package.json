@@ -1,0 +1,29 @@
+{
+  "name": "iso-gl",
+  "version": "0.0.0",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/porl91/isogl.git"
+  },
+  "scripts": {
+    "build": "webpack -p",
+    "start": "webpack-dev-server -d --content-base ./public"
+  },
+  "dependencies": {
+    "clean-webpack-plugin": "0.1.19",
+    "html-webpack-plugin": "3.2.0",
+    "src": "^1.1.2",
+    "ts-loader": "4.4.2",
+    "typescript": "3.0.1",
+    "web": "0.0.2",
+    "webpack-cli": "3.1.0",
+    "gl-matrix": "^2.3.2"
+  },
+  "devDependencies": {
+    "@types/gl-matrix": "^2.4.5",
+    "copy-webpack-plugin": "^5.0.0",
+    "webpack": "^4.29.6",
+    "webpack-dev-server": "^3.1.5"
+  }
+}
