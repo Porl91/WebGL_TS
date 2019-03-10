@@ -66,7 +66,7 @@ export class Game {
 	}
 	private async addObjects() {
 		this.gameObjects.push(new Cube(this.gl, await TextureLoader.loadFromFile(this.gl, '/res/floor_new.jpg')));
-		this.gameObjects.push(new Sphere(this.gl, await TextureLoader.loadFromFile(this.gl, '/res/floor_new.jpg'), 1, 50, 50));
+		this.gameObjects.push(new Sphere(this.gl, await TextureLoader.loadFromFile(this.gl, '/res/WelcomeToEarf.jpg'), 1, 50, 50));
 	}
 	async start() {
 		await this.buildProgram();
@@ -118,5 +118,13 @@ export class Game {
 		}
 
 		window.requestAnimationFrame(delta => this.draw(delta));
+	}
+	moveCameraPosition(xDelta: number, zDelta: number) {
+		this.cameraPosition[0] += xDelta;
+		this.cameraPosition[2] += zDelta;
+	}
+	moveLightPosition(xDelta: number, zDelta: number) {
+		this.lightPosition[0] += xDelta;
+		this.lightPosition[2] += zDelta;
 	}
 }
