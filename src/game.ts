@@ -1,4 +1,4 @@
-import { mat4, vec3 } from 'gl-matrix';
+import { mat4, vec3, glMatrix } from 'gl-matrix';
 import { Chunk } from './drawables/chunk';
 import { ProgramBuilder } from './program_builder';
 import { ProgramInfo } from './program_info';
@@ -66,9 +66,9 @@ export class Game {
 		this.chunks = await Promise.all(unprocessedChunks);
 	}
 	private async addObjects() {
-		this.gameObjects.push(new Cube(this.gl, await TextureLoader.loadFromFile(this.gl, '/res/floor_new.jpg'), vec3.fromValues(0, 2, 0)));
-		this.gameObjects.push(new Sphere(this.gl, await TextureLoader.loadFromFile(this.gl, '/res/WelcomeToEarf.jpg'), vec3.fromValues(3, 2, 0), 1, 50, 50));
-		this.gameObjects.push(new Sphere(this.gl, await TextureLoader.loadFromFile(this.gl, '/res/sun.jpg'), vec3.fromValues(0, 0, 0), 1, 50, 50));
+		this.gameObjects.push(new Cube(this.gl, await TextureLoader.loadFromImageFile(this.gl, '/res/floor_new.jpg'), vec3.fromValues(0, 2, 0)));
+		this.gameObjects.push(new Sphere(this.gl, await TextureLoader.loadFromImageFile(this.gl, '/res/WelcomeToEarf.jpg'), vec3.fromValues(3, 2, 0), 1, 50, 50));
+		this.gameObjects.push(new Sphere(this.gl, await TextureLoader.loadFromImageFile(this.gl, '/res/sun.jpg'), vec3.fromValues(0, 0, 0), 1, 50, 50));
 	}
 	async start() {
 		await this.buildProgram();
@@ -142,9 +142,23 @@ export class Game {
 		}
 
 		for (let gameObject of this.gameObjects) {
-		    gameObject.draw(this.programInfo, viewProjectionMatrix);
+			gameObject.draw(this.programInfo, viewProjectionMatrix);
 		}
+
+		// if (!this.test) {
+		// 	const image = new Image();
+		// 	image.src = this.gl.canvas.toDataURL('image/png');
+		// 	image.onload = () => {
+		// 		this.gameObjects.splice(
+		// 			this.gameObjects.length - 1, 
+		// 			0, 
+		// 			new Cube(this.gl, TextureLoader.loadFromTexImageSource(this.gl, image), vec3.fromValues(3, 4, 5))
+		// 		);
+		// 	};
+		// 	this.test = true;
+		// }
 	}
+	// private test: boolean = false;
 	moveCameraPosition(xDelta: number, yDelta: number, zDelta: number) {
 		this.cameraPosition[0] += xDelta;
 		this.cameraPosition[1] += yDelta;

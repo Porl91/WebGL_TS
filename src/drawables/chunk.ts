@@ -54,7 +54,7 @@ export class Chunk {
             positions.buffer,
             Chunk.getTextureCoords(gl, x, z, width, depth), 
             Chunk.getNormalsFromPositions(gl, positions.data),
-            await TextureLoader.loadFromFile(gl, '/res/floor_new.jpg'),
+            await TextureLoader.loadFromImageFile(gl, '/res/floor_new.jpg'),
             Chunk.getIndices(gl, x, z, width, depth)
         );
     }
