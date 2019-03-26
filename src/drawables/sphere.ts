@@ -8,7 +8,7 @@ export class Sphere {
     private normals: WebGLBuffer;
     private indices: WebGLBufferWithSize;
 
-    constructor(private gl: WebGLRenderingContext, private texture: WebGLTexture, public position: vec3, radius: number, rings: number, sectors: number) {
+    constructor(private gl: WebGL2RenderingContext, private texture: WebGLTexture, public position: vec3, radius: number, rings: number, sectors: number) {
         const positions = [];
         const textureCoords = [];
         const normals = [];

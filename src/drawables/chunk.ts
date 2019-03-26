@@ -5,7 +5,7 @@ import { WebGLBufferWithSize, WebGLBufferWithData, GLHelpers } from "../gl_utils
 
 export class Chunk {
     constructor(
-        private gl: WebGLRenderingContext, 
+        private gl: WebGL2RenderingContext, 
         public positionsBuffer: WebGLBuffer, 
         public textureBuffer: WebGLBuffer, 
         public normalsBuffer: WebGLBuffer, 
@@ -47,7 +47,7 @@ export class Chunk {
         this.gl.bindBuffer(this.gl.ELEMENT_ARRAY_BUFFER, this.indices.buffer);
         this.gl.drawElements(this.gl.TRIANGLES, this.indices.size, this.gl.UNSIGNED_SHORT, 0);
     }
-    static async generate(gl: WebGLRenderingContext, x: number, z: number, width: number, depth: number, xTileScale: number, yTileScale: number, zTileScale: number) {
+    static async generate(gl: WebGL2RenderingContext, x: number, z: number, width: number, depth: number, xTileScale: number, yTileScale: number, zTileScale: number) {
         let positions = Chunk.getPositions(gl, x, z, width, depth, xTileScale, yTileScale, zTileScale);
         return new Chunk(
             gl, 
@@ -58,7 +58,7 @@ export class Chunk {
             Chunk.getIndices(gl, x, z, width, depth)
         );
     }
-    static getPositions(gl: WebGLRenderingContext, xOffset: number, zOffset: number, width: number, depth: number, xTileScale: number, yTileScale: number, zTileScale: number): WebGLBufferWithData {
+    static getPositions(gl: WebGL2RenderingContext, xOffset: number, zOffset: number, width: number, depth: number, xTileScale: number, yTileScale: number, zTileScale: number): WebGLBufferWithData {
         const maxHeight = 0.5 * yTileScale;
         let data = [];
         let getHeight = (x: number, z: number, maxHeight: number) => {
@@ -88,7 +88,7 @@ export class Chunk {
             buffer: GLHelpers.createBuffer(gl, data, gl.ARRAY_BUFFER, values => new Float32Array(values))
         };
     }
-    static getTextureCoords(gl: WebGLRenderingContext, xOffset: number, zOffset: number, width: number, depth: number): WebGLBuffer {
+    static getTextureCoords(gl: WebGL2RenderingContext, xOffset: number, zOffset: number, width: number, depth: number): WebGLBuffer {
         let data = [];
         for (let z = 0; z < depth; z++) {
             for (let x = 0; x < width; x++) {
@@ -102,7 +102,7 @@ export class Chunk {
         }
         return GLHelpers.createBuffer(gl, data, gl.ARRAY_BUFFER, values => new Float32Array(values));
     }
-    static getNormalsFromPositions(gl: WebGLRenderingContext, positions: number[]): WebGLBuffer {
+    static getNormalsFromPositions(gl: WebGL2RenderingContext, positions: number[]): WebGLBuffer {
         const verticesPerQuad = 4;
         const componentsPerVertex = 3;
         let data = [];
@@ -140,7 +140,7 @@ export class Chunk {
         }
         return GLHelpers.createBuffer(gl, data, gl.ARRAY_BUFFER, values => new Float32Array(values));
     }
-    static getIndices(gl: WebGLRenderingContext, xOffset: number, zOffset: number, width: number, depth: number): WebGLBufferWithSize {
+    static getIndices(gl: WebGL2RenderingContext, xOffset: number, zOffset: number, width: number, depth: number): WebGLBufferWithSize {
         let data = [];
         for (let i = 0; i < width * depth; i++) {
             const offset = (i * 4);

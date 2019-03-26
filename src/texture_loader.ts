@@ -24,13 +24,13 @@ export class TextureLoader {
 		});
 	}
 
-	static async loadFromVideoFile(gl: WebGLRenderingContext, filename: string) {
+	static async loadFromVideoFile(gl: WebGL2RenderingContext, filename: string) {
 		return this.loadFromVideo(gl, 
 			await this.loadVideo(filename)
 		);
 	}
 
-	static loadFromVideo(gl: WebGLRenderingContext, video: HTMLVideoElement): Promise<WebGLTexture> {
+	static loadFromVideo(gl: WebGL2RenderingContext, video: HTMLVideoElement): Promise<WebGLTexture> {
 		return new Promise<WebGLTexture>((resolve, reject) => {
 			const texture = this.loadFromTexImageSource(gl, video);
 			if (texture == null) {
@@ -41,7 +41,7 @@ export class TextureLoader {
 		});
 	}
 
-	static loadFromTexImageSource(gl: WebGLRenderingContext, source: TexImageSource): WebGLTexture {
+	static loadFromTexImageSource(gl: WebGL2RenderingContext, source: TexImageSource): WebGLTexture {
 		const texture = gl.createTexture()!;
 		gl.bindTexture(gl.TEXTURE_2D, texture);
 		gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, source);
@@ -59,7 +59,7 @@ export class TextureLoader {
 		return texture;
 	}
 
-	static async loadFromImageFile(gl: WebGLRenderingContext, filename: string): Promise<WebGLTexture> {
+	static async loadFromImageFile(gl: WebGL2RenderingContext, filename: string): Promise<WebGLTexture> {
 		return new Promise((resolve, reject) => {
 			const image = new Image();
 			image.onload = () => {

@@ -7,7 +7,7 @@ export class Cube {
 	textureCoords: WebGLBuffer;
 	normals: WebGLBuffer;
 	indices: WebGLBufferWithSize;
-	constructor(private gl: WebGLRenderingContext, private texture: WebGLTexture, public position: vec3) {
+	constructor(private gl: WebGL2RenderingContext, private texture: WebGLTexture, public position: vec3) {
 		this.positions = GLHelpers.createBuffer(gl, 
 			[
 				// Front face

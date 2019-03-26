@@ -1,5 +1,5 @@
 export class GLHelpers {
-	static createBuffer(gl: WebGLRenderingContext, data: number[], type: number, getTypedData: TypeDataWrapper): WebGLBuffer {
+	static createBuffer(gl: WebGL2RenderingContext, data: number[], type: number, getTypedData: TypeDataWrapper): WebGLBuffer {
 		const buffer = gl.createBuffer();
 		gl.bindBuffer(type, buffer);
 		gl.bufferData(type, getTypedData(data), gl.STATIC_DRAW);

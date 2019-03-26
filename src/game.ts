@@ -10,7 +10,7 @@ import { Sphere } from './drawables/sphere';
 import { KeyStateChanger } from './key_state_changer';
 
 export class Game {
-	private gl: WebGLRenderingContext;
+	private gl: WebGL2RenderingContext;
 	private programInfo: ProgramInfo;
 	private chunks: Chunk[] = [];
 	private gameObjects: Drawable[] = [];
@@ -20,7 +20,7 @@ export class Game {
 	private ambientColour: number[] = [ 1.0, 0.0, 1.0 ];
 	
 	constructor(canvas: HTMLCanvasElement, private keyStateChanger: KeyStateChanger) { 
-		this.gl = canvas.getContext('webgl')!;
+		this.gl = canvas.getContext('webgl2')!;
 	}
 	private async buildProgram() {
 		const vertShaderSource = await FileLoader.loadAsText('/res/test_vert.vert');
